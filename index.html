@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Smart Helmet 5.0 — Predictive Mesh Mine Safety</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar glass">
+      <div>
+        <h1>Smart Helmet 5.0 — Predictive Mesh Mine Safety</h1>
+        <p><span class="pulse blue"></span> Neural AI Risk Engine <span>•</span> Self-Healing Mesh <span>•</span> Browser Web App</p>
+      </div>
+      <div class="kpis">
+        <div class="kpi"><strong id="kpiOnline">—</strong><span>узлов онлайн</span></div>
+        <div class="kpi"><strong id="kpiMiners">—</strong><span>шахтёров</span></div>
+        <div class="kpi"><strong id="kpiCritical">—</strong><span>критических зон</span></div>
+        <div class="kpi"><strong id="kpiPredicted">—</strong><span>AI прогноз</span></div>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="map-card glass">
+        <div class="card-title-row">
+          <div>
+            <h2>Схема шахты: датчики, mesh-узлы и Smart Helmet 5.0</h2>
+            <p>Узлы меняют цвет по результату AI-анализа. При сбое связи mesh перестраивает маршрут.</p>
+          </div>
+          <div class="legend">
+            <span><i class="dot safe"></i>безопасно</span>
+            <span><i class="dot warning"></i>потенциально опасно</span>
+            <span><i class="dot danger"></i>опасно / связь потеряна</span>
+            <span><i class="line main"></i>основная связь</span>
+            <span><i class="line reserve"></i>mesh-обход</span>
+            <span><i class="dot miner"></i>Smart Helmet</span>
+          </div>
+        </div>
+
+        <div class="mine-board" id="mineBoard">
+          <svg id="mineSvg" viewBox="0 0 1100 690">
+            <defs>
+              <filter id="softGlow" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              <filter id="redGlow" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="9" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              <linearGradient id="roomGrad" x1="0" x2="1"><stop offset="0" stop-color="#18342f"/><stop offset="1" stop-color="#133846"/></linearGradient>
+            </defs>
+
+            <rect x="15" y="18" width="1070" height="650" rx="24" fill="#111b25" stroke="#273746"/>
+            <text x="62" y="245" class="small-label">Ствол / поверхность</text>
+            <text x="420" y="52" class="network-label">LoRa-Mesh магистраль + датчики газа/вибрации</text>
+
+            <g id="roomsLayer">
+              <rect class="room" x="220" y="500" width="125" height="86" rx="14"/><text class="roomText" x="282" y="615">Забой A</text>
+              <rect class="room" x="385" y="500" width="125" height="86" rx="14"/><text class="roomText" x="448" y="615">Забой B</text>
+              <rect class="room" x="550" y="500" width="125" height="86" rx="14"/><text class="roomText" x="612" y="615">Забой C</text>
+              <rect class="room" x="715" y="500" width="125" height="86" rx="14"/><text class="roomText" x="778" y="615">Забой D</text>
+              <rect class="room" x="385" y="98" width="125" height="86" rx="14"/><text class="roomText" x="448" y="88">Забой E</text>
+              <rect class="room" x="715" y="98" width="125" height="86" rx="14"/><text class="roomText" x="778" y="88">Забой F</text>
+            </g>
+
+            <g id="edgeLayer"></g>
+            <g id="reserveLayer"></g>
+            <g id="trunkLayer"></g>
+            <g id="zoneLayer"></g>
+            <g id="minerLayer"></g>
+          </svg>
+          <div id="tooltip" class="tooltip" role="tooltip"></div>
+        </div>
+
+        <div class="controls">
+          <button id="startBtn" class="primary">▶ Старт</button>
+          <button id="pauseBtn">⏸ Пауза</button>
+          <button id="resetBtn">↺ Сброс</button>
+          <button id="predictiveBtn">Встроенная симуляция</button>
+          <button id="offline3Btn">Сбой узла 3</button>
+          <button id="offline4Btn">Сбой узла 4</button>
+          <button id="emergencyBtn" class="dangerAction">Авария в E</button>
+          <label class="uploadBtn">Загрузить CSV<input id="csvInput" type="file" accept=".csv" /></label>
+          <label class="speedControl">Интервал <input id="speed" type="range" min="500" max="2500" step="100" value="1000"><span id="speedLabel">1000 мс</span></label>
+        </div>
+      </section>
+
+      <aside class="side-panel">
+        <section class="glass panel">
+          <h2>AI прогноз аварий</h2>
+          <div id="forecastPanel" class="forecast-panel"></div>
+        </section>
+        <section class="glass panel">
+          <h2>Состояние забоев</h2>
+          <div id="zoneStatus" class="zone-status"></div>
+        </section>
+        <section class="glass panel">
+          <h2>Mesh маршрутизация</h2>
+          <div id="meshPanel" class="mesh-panel"></div>
+        </section>
+        <section class="glass panel">
+          <h2>Smart Helmet 5.0</h2>
+          <div id="helmetPanel" class="helmet-panel"></div>
+        </section>
+      </aside>
+
+      <section class="glass chart-panel">
+        <div class="card-title-row">
+          <div><h2>История метана CH₄ и прогнозируемый рост</h2><p>Фиолетовые маркеры показывают зоны, где AI ожидает риск до наступления critical state.</p></div>
+          <button id="exportBtn">Скачать журнал CSV</button>
+        </div>
+        <canvas id="chart" width="1450" height="290"></canvas>
+      </section>
+
+      <section class="glass log-panel">
+        <h2>Журнал событий AI + Mesh</h2>
+        <div id="eventLog" class="event-log"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="assets/model_bundle.js"></script>
+  <script src="app.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
+</body>
+</html>
